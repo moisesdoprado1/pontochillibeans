@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Chilli Beans - Ponto</title>
+<style>
+  * {
+    box-sizing: border-box;
+  }
+  body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #121212;
+    color: #fff;
+    margin: 0;
+    padding: 15px 20px 40px;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  header {
+    width: 100%;
+    max-width: 600px;
+    margin-top: 30px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 2px solid #ff0000;
+    padding-bottom: 10px;
+  }
+  header h2 {
+    font-weight: 700;
+    font-size: 1.8rem;
+    letter-spacing: 2px;
+    color: #ff0000;
+  }
+  header button {
+    background: transparent;
+    border: 2px solid #ff0000;
+    color: #ff0000;
+    font-weight: 700;
+    padding: 8px 18px;
+    border-radius: 30px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    font-size: 1rem;
+  }
+  header button:hover {
+    background-color: #ff0000;
+    color: #000;
+  }
+  .info-box {
+    width: 100%;
+    max-width: 600px;
+    margin-top: 25px;
+    background: #1a1a1a;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 8px #ff0000cc;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+  }
+  .info-box label {
+    font-weight: 700;
+    font-size: 1rem;
+    color: #ff0000;
+  }
+  #nomeFuncionario {
+    width: 100%;
+    background-color: #2a2a2a;
+    border: none;
+    border-radius: 6px;
+    padding: 12px 15px;
+    color: #fff;
+    font-weight: 600;
+    font-size: 1.1rem;
+    user-select: none;
+  }
+  .registro-row {
+    display: flex;
+    gap: 15px;
+    margin-top: 10px;
+    justify-content: space-between;
+    flex-wrap: wrap;
+  }
+  #tipoRegistro {
+    flex: 1;
+    padding: 12px 15px;
+    border-radius: 6px;
+    border: none;
+    background-color: #2a2a2a;
+    color: #fff;
+    font-weight: 600;
+    font-size: 1rem;
+    cursor: pointer;
+    appearance: none;
+    background-image: url("data:image/svg+xml;charset=US-ASCII,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='7'><path fill='none' stroke='%23ff0000' stroke-width='2' d='M1 1l5 5 5-5'/></svg>");
+    background-repeat: no-repeat;
+    background-position: right 15px center;
+    background-size: 12px 7px;
+    min-width: 120px;
+  }
+  button#btnRegistrar {
+    background-color: #ff0000;
+    border: none;
+    padding: 12px 22px;
+    border-radius: 30px;
+    color: #000;
+    font-weight: 700;
+    font-size: 1.1rem;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    min-width: 140px;
+    flex-shrink: 0;
+  }
+  button#btnRegistrar:hover {
+    background-color: #cc0000;
+  }
+  table {
+    margin-top: 30px;
+    width: 100%;
+    max-width: 600px;
+    border-collapse: collapse;
+    box-shadow: 0 0 8px #ff0000cc;
+    border-radius: 8px;
+    overflow: hidden;
+    background-color: #1a1a1a;
+  }
+  th, td {
+    padding: 14px 18px;
+    text-align: left;
+    border-bottom: 1px solid #333;
+    font-weight: 600;
+    color: #fff;
+  }
+  th {
+    background-color: #ff0000;
+    color: #000;
+    font-size: 1.1rem;
+    letter-spacing: 1px;
+  }
+  tbody tr:hover {
+    background-color: #330000;
+    cursor: default;
+  }
+  @media (max-width: 640px) {
+    body {
+      padding: 10px 10px 30px 10px;
+    }
+    header, .info-box, table {
+      max-width: 100%;
+    }
+    .registro-row {
+      flex-direction: column;
+    }
+    button#btnRegistrar {
+      width: 100%;
+      min-width: auto;
+    }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h2>Chilli Beans - Ponto</h2>
+  <button id="btnLogout">Sair</button>
+</header>
+
+<div class="info-box">
+  <label for="nomeFuncionario">Funcionário</label>
+  <input type="text" id="nomeFuncionario" readonly />
+
+  <div class="registro-row">
+    <select id="tipoRegistro" aria-label="Tipo de registro">
+      <option value="">Selecione o tipo</option>
+      <option value="Entrada">Entrada</option>
+      <option value="Saída">Saída</option>
+      <option value="Intervalo">Intervalo</option>
+    </select>
+    <button id="btnRegistrar">Registrar</button>
+  </div>
+</div>
+
+<table>
+  <thead>
+    <tr>
+      <th>Funcionário</th>
+      <th>Tipo</th>
+      <th>Data</th>
+      <th>Hora</th>
+    </tr>
+  </thead>
+  <tbody id="tabelaBody">
+    <tr><td colspan="4" style="text-align:center; color:#ff5555;">Carregando registros...</td></tr>
+  </tbody>
+</table>
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-app.js";
+  import { getAuth, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-auth.js";
+  import {
+    getFirestore, collection, addDoc, query, where, orderBy,
+    limit, onSnapshot, serverTimestamp
+  } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyB9ntB-GKKOPaPzrWJJ_fFKhLoh9EJKjcY",
+    authDomain: "ponto-chillibeans-f2f53.firebaseapp.com",
+    projectId: "ponto-chillibeans-f2f53",
+    storageBucket: "ponto-chillibeans-f2f53.firebasestorage.app",
+    messagingSenderId: "636207921136",
+    appId: "1:636207921136:web:7f6911f9ee92e2ca338f35"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const db = getFirestore(app);
+
+  const nomeFuncionario = document.getElementById('nomeFuncionario');
+  const tipoRegistro = document.getElementById('tipoRegistro');
+  const btnRegistrar = document.getElementById('btnRegistrar');
+  const tabelaBody = document.getElementById('tabelaBody');
+  const btnLogout = document.getElementById('btnLogout');
+
+  // Controle do usuário logado
+  onAuthStateChanged(auth, user => {
+    if (user) {
+      nomeFuncionario.value = user.email || user.displayName || "Usuário";
+      carregarRegistros(user.uid);
+    } else {
+      window.location.href = 'login.html';
+    }
+  });
+
+  btnLogout.addEventListener('click', async () => {
+    await signOut(auth);
+    window.location.href = 'login.html';
+  });
+
+  btnRegistrar.addEventListener('click', async () => {
+    const tipo = tipoRegistro.value;
+    if (!tipo) {
+      alert('Selecione o tipo de registro');
+      return;
+    }
+
+    btnRegistrar.disabled = true;
+    btnRegistrar.textContent = 'Registrando...';
+
+    const agora = new Date();
+    const user = auth.currentUser;
+
+    try {
+      await addDoc(collection(db, "registrosPonto"), {
+        uid: user.uid,
+        email: user.email,
+        tipo: tipo,
+        data: agora.toLocaleDateString('pt-BR'),
+        hora: agora.toLocaleTimeString('pt-BR', {hour: '2-digit', minute: '2-digit'}),
+        timestamp: serverTimestamp()
+      });
+      tipoRegistro.value = "";
+    } catch (error) {
+      alert("Erro ao registrar ponto: " + error.message);
+    } finally {
+      btnRegistrar.disabled = false;
+      btnRegistrar.textContent = "Registrar";
+    }
+  });
+
+  function carregarRegistros(uid) {
+    // Query: registros do usuário, ordenados por timestamp desc, limite 20
+    const q = query(collection(db, "registrosPonto"),
+      where("uid", "==", uid),
+      orderBy("timestamp", "desc"),
+      limit(20)
+    );
+
+    onSnapshot(q, (querySnapshot) => {
+      tabelaBody.innerHTML = "";
+      if (querySnapshot.empty) {
+        tabelaBody.innerHTML = `<tr><td colspan="4" style="text-align:center; color:#ff5555;">Nenhum registro encontrado</td></tr>`;
+        return;
+      }
+      querySnapshot.forEach(doc => {
+        const data = doc.data();
+        tabelaBody.innerHTML += `
+          <tr>
+            <td>${data.email}</td>
+            <td>${data.tipo}</td>
+            <td>${data.data}</td>
+            <td>${data.hora}</td>
+          </tr>
+        `;
+      });
+    }, (error) => {
+      tabelaBody.innerHTML = `<tr><td colspan="4" style="text-align:center; color:#ff5555;">Erro ao carregar registros</td></tr>`;
+    });
+  }
+</script>
+
+</body>
+</html>
