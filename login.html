@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Login - Chilli Beans Ponto</title>
+<style>
+  /* Reset simples */
+  * {
+    box-sizing: border-box;
+  }
+  body {
+    margin: 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #121212;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    padding: 20px;
+  }
+  .container {
+    background: #1a1a1a;
+    padding: 30px 25px;
+    border-radius: 10px;
+    width: 100%;
+    max-width: 400px;
+    box-shadow: 0 0 15px #ff0000cc;
+  }
+  h2 {
+    text-align: center;
+    color: #ff0000;
+    margin-bottom: 25px;
+    letter-spacing: 2px;
+  }
+  label {
+    display: block;
+    font-weight: 700;
+    margin-bottom: 6px;
+    color: #ff0000;
+  }
+  input[type="email"],
+  input[type="password"] {
+    width: 100%;
+    padding: 12px 15px;
+    border-radius: 6px;
+    border: none;
+    margin-bottom: 18px;
+    font-size: 1rem;
+    background-color: #2a2a2a;
+    color: #fff;
+    font-weight: 600;
+  }
+  button {
+    width: 100%;
+    background-color: #ff0000;
+    border: none;
+    padding: 14px 0;
+    border-radius: 30px;
+    font-weight: 700;
+    font-size: 1.1rem;
+    color: #000;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  button:hover {
+    background-color: #cc0000;
+  }
+  .error {
+    color: #ff5555;
+    font-weight: 700;
+    margin-bottom: 12px;
+    text-align: center;
+  }
+  @media (max-width: 440px) {
+    .container {
+      padding: 25px 18px;
+    }
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+  <h2>CHILLIBEANS PONTO</h2>
+  <div id="errorMsg" class="error" style="display:none;"></div>
+  <label for="email">Email</label>
+  <input type="email" id="email" placeholder="seu@email.com" autocomplete="username" />
+  <label for="senha">Senha</label>
+  <input type="password" id="senha" placeholder="Senha" autocomplete="current-password" />
+  <button id="btnLogin">Entrar</button>
+</div>
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-app.js";
+  import { getAuth, signInWithEmailAndPassword, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-auth.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyB9ntB-GKKOPaPzrWJJ_fFKhLoh9EJKjcY",
+    authDomain: "ponto-chillibeans-f2f53.firebaseapp.com",
+    projectId: "ponto-chillibeans-f2f53",
+    storageBucket: "ponto-chillibeans-f2f53.firebasestorage.app",
+    messagingSenderId: "636207921136",
+    appId: "1:636207921136:web:7f6911f9ee92e2ca338f35"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+
+  const btnLogin = document.getElementById('btnLogin');
+  const emailInput = document.getElementById('email');
+  const senhaInput = document.getElementById('senha');
+  const errorMsg = document.getElementById('errorMsg');
+
+  btnLogin.addEventListener('click', async () => {
+    errorMsg.style.display = 'none';
+    const email = emailInput.value.trim();
+    const senha = senhaInput.value;
+
+    if (!email || !senha) {
+      errorMsg.textContent = "Por favor, preencha todos os campos.";
+      errorMsg.style.display = 'block';
+      return;
+    }
+
+    btnLogin.disabled = true;
+    btnLogin.textContent = 'Entrando...';
+
+    try {
+      await signInWithEmailAndPassword(auth, email, senha);
+      // Redireciona para a página do ponto
+      window.location.href = 'index.html';
+    } catch (error) {
+      errorMsg.textContent = error.message;
+      errorMsg.style.display = 'block';
+      btnLogin.disabled = false;
+      btnLogin.textContent = 'Entrar';
+    }
+  });
+
+  // Se já estiver logado, já manda direto para o ponto
+  onAuthStateChanged(auth, user => {
+    if (user) {
+      window.location.href = 'index.html';
+    }
+  });
+</script>
+
+</body>
+</html>
